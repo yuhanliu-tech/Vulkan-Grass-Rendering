@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Image.h"
+#include <chrono>
+#include <iostream>
 
 Device* device;
 SwapChain* swapChain;
@@ -143,10 +145,27 @@ int main() {
     glfwSetMouseButtonCallback(GetGLFWWindow(), mouseDownCallback);
     glfwSetCursorPosCallback(GetGLFWWindow(), mouseMoveCallback);
 
+    // Track program FPS for performance analysis
+    auto lastTime = std::chrono::high_resolution_clock::now();
+    int frameCount = 0;
+
     while (!ShouldQuit()) {
         glfwPollEvents();
         scene->UpdateTime();
         renderer->Frame();
+
+        frameCount++;
+
+        // Calculate FPS every second 
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastTime).count();
+
+        // print FPS
+        if (elapsed >= 1) {
+            //std::cout << "FPS: " << frameCount << std::endl;
+            frameCount = 0;
+            lastTime = currentTime;
+        }
     }
 
     vkDeviceWaitIdle(device->GetVkDevice());

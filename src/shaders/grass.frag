@@ -39,7 +39,7 @@ void main() {
 
     }
 
-    vec3 green = mix(darkGreen, lightGreen, fsNor);
+    vec3 green = mix(darkGreen, lightGreen, fsPosY);
 
     outColor = vec4(green * (1.f + diffuseTerm),1.0);
 
