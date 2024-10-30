@@ -30,6 +30,32 @@ void main() {
     outV2[gl_InvocationID] = inV2[gl_InvocationID];
     outUp[gl_InvocationID] = inUp[gl_InvocationID];
 
+    // Calculate distance to grass blade
+
+    vec3 bladePos = vec3(gl_in[gl_InvocationID].gl_Position);
+    vec3 cameraPos = vec3(inverse(camera.view)[3]); 
+    float dist = length(bladePos - cameraPos);
+
+    //  Tessellate to varying levels of detail as a function of how far the grass blade is from the camera
+
+    float tessLevel;
+    if (dist < 15.0) {
+        tessLevel = 8.0; 
+    } else if (dist < 25.0) {
+        tessLevel = 6.0; 
+    } else {
+        tessLevel = 4.0; 
+    }
+
+    // Set tessellation level
+    gl_TessLevelInner[0] = tessLevel;
+    gl_TessLevelInner[1] = tessLevel;
+    gl_TessLevelOuter[0] = tessLevel;
+    gl_TessLevelOuter[1] = tessLevel;
+    gl_TessLevelOuter[2] = tessLevel;
+    gl_TessLevelOuter[3] = tessLevel;
+
+    /*
 	// DONE: Set level of tesselation
     int inLevel = 8;
     int outLevel = 8;
@@ -40,4 +66,5 @@ void main() {
     gl_TessLevelOuter[1] = outLevel;
     gl_TessLevelOuter[2] = outLevel;
     gl_TessLevelOuter[3] = outLevel;
+    */
 }

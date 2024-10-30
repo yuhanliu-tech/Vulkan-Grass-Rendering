@@ -7,15 +7,22 @@ layout(set = 0, binding = 0) uniform CameraBufferObject {
 } camera;
 
 // DONE: Declare fragment shader inputs
-layout(location = 0) in float fsV;
-layout(location = 1) in vec3 fsNor;
+layout(location = 0) in vec3 fsNor;
+layout(location = 1) in float fsPosY;
 
 layout(location = 0) out vec4 outColor;
 
 void main() {
     // TODO: Compute fragment color (make this better)
 
-    vec4 green = vec4(0.f, 0.5f, 0.f, 1.f);
+    vec3 light = vec3(0.0, 1.0, 0.0);
+    float diffuseTerm = dot(normalize(fsNor), normalize(light));
 
-    outColor = green;
+    vec3 darkGreen = vec3(0.1f, 0.3f, 0.1f);
+    vec3 lightGreen = vec3(0.25f, 0.45f, 0.15f);
+
+    vec3 green = mix(darkGreen, lightGreen, fsPosY);
+
+    outColor = vec4(green * (1.f + diffuseTerm),1.0);
+
 }
