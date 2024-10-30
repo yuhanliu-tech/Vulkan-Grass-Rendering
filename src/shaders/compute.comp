@@ -85,13 +85,13 @@ void main() {
 	float direction = blade.v0.w;
 	float height = blade.v1.w;
 	float width = blade.v2.w;
-	float stiffness = blade.up.w * 0.5;
+	float stiffness = blade.up.w * 0.8;
 
     // DONE: Apply forces on every blade and update the vertices in the buffer
 
     // Gravity -----------------------------------------------------
 
-    float g = -9.8; // gravitational acceleration
+    float g = 19.8; // gravitational acceleration
     vec4 d = vec4(0.f,-1.f,0.f,g);
 
     float mass = 1.f; // mass of blade

@@ -45,8 +45,17 @@ void main() {
     vec3 t0 = normalize(b - a); 
 
     // triangle interpolation parameter
-    float threshold = 0.5;
+    float threshold = 0.0;
     float t = 0.5 + (u - 0.5) * (1 - (max(v - threshold, 0) / (1 - threshold)));
+
+    // enhance shape of grass, inspired by paper's section on dandelion leaves
+    float spikes = 0.5 * abs(fract(50.f * v)) * smoothstep(0.9, 0.1, v);
+    
+    if (u > 0) {
+        t += spikes;
+    } else {
+        t -= spikes;
+    }
 
     vec3 pos = (1-t) * c0 + (t * c1); // interpolate to calculate position
     fsNor = normalize(cross(t0, t1)); // normal via cross produce 

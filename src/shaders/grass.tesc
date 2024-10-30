@@ -36,16 +36,19 @@ void main() {
     vec3 cameraPos = vec3(inverse(camera.view)[3]); 
     float dist = length(bladePos - cameraPos);
 
-    //  Tessellate to varying levels of detail as a function of how far the grass blade is from the camera
+    // Tessellate to varying levels of detail as a function of how far the grass blade is from the camera
 
     float tessLevel;
     if (dist < 15.0) {
-        tessLevel = 8.0; 
+        tessLevel = 20.0; 
     } else if (dist < 25.0) {
-        tessLevel = 6.0; 
+        tessLevel = 10.0; 
     } else {
-        tessLevel = 4.0; 
+        tessLevel = 6.0; 
     }
+
+    // Low/varying tesselations doesn't work for the dandelion leaves, so use this instead
+    tessLevel = 30.0;
 
     // Set tessellation level
     gl_TessLevelInner[0] = tessLevel;
@@ -54,17 +57,4 @@ void main() {
     gl_TessLevelOuter[1] = tessLevel;
     gl_TessLevelOuter[2] = tessLevel;
     gl_TessLevelOuter[3] = tessLevel;
-
-    /*
-	// DONE: Set level of tesselation
-    int inLevel = 8;
-    int outLevel = 8;
-
-    gl_TessLevelInner[0] = inLevel;
-    gl_TessLevelInner[1] = inLevel;
-    gl_TessLevelOuter[0] = inLevel;
-    gl_TessLevelOuter[1] = outLevel;
-    gl_TessLevelOuter[2] = outLevel;
-    gl_TessLevelOuter[3] = outLevel;
-    */
 }
