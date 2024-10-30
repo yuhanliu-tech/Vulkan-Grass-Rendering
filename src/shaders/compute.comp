@@ -1,6 +1,14 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+#define WIND 1
+#define GRAVITY 1
+#define RECOVERY 1
+#define ORIENT_CULL 0
+#define FRUSTUM_CULL 0
+#define DIST_CULL 0
+
+
 #define WORKGROUP_SIZE 32
 layout(local_size_x = WORKGROUP_SIZE, local_size_y = 1, local_size_z = 1) in;
 
@@ -103,12 +111,21 @@ void main() {
     vec3 f = cross(widthDir, up);
     vec3 frontGravity = 0.25 * length(environmentGravity) * f;
 
-    vec3 gravity = environmentGravity + frontGravity; 
+#if GRAVITY
+    vec3 gravity = environmentGravity + frontGravity;
+#else
+    vec3 gravity = vec3(0.f);
+#endif
 
     // Recovery -----------------------------------------------------
 
     vec3 iv2 = v0 + height * up; // initial pose of blade 
+
+#if RECOVERY
     vec3 recovery = (iv2 - v2) * stiffness; // Hooke's law
+#else
+    vec3 recovery = vec3(0.f);
+#endif
 
     // Wind -----------------------------------------------------
 
@@ -118,7 +135,12 @@ void main() {
     float fr = dot(v2-v0, up) / height; // height ratio (straightness of blade)
 
     float alignment = fd * fr; // (theta)
+
+#if WIND
     vec3 wind = wi * alignment; 
+#else 
+    vec3 wind = vec3(0.f);
+#endif
 
     // Total Forces -----------------------------------------------------
 
@@ -162,14 +184,20 @@ void main() {
 
     vec3 cameraDir = normalize(-inverse(camera.view)[2].xyz);
     if (abs(dot(cameraDir, widthDir)) > 0.9) {
+#if ORIENT_CULL
 		return; // keep blade
+#else
+#endif
 	}
 
     // View frustum culling ---------------------------------
 
     vec3 m = (0.25 * v0) + (0.5 * v1) + (0.25 * v2);
     if (!inViewFrustum(v0) && !inViewFrustum(v2) && !inViewFrustum(m)) {
+#if FRUSTUM_CULL
 		return; // keep blade
+#else
+#endif
 	}
 
     // Distance culling -------------------------------------
@@ -182,7 +210,10 @@ void main() {
     int distLevel = 20;
 
     if (dProj > dMax || gl_GlobalInvocationID.x % distLevel > floor(distLevel * (1.0 - (dProj / dMax)))) {
+#if DIST_CULL
 		return; // keep blade
+#else
+#endif
 	}
 
     // Update buffer

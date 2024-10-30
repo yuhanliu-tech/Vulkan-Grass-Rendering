@@ -1,6 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+#define EXTRA_BLADES 1
+
 layout(set = 0, binding = 0) uniform CameraBufferObject {
     mat4 view;
     mat4 proj;
@@ -22,11 +24,13 @@ void main() {
     vec3 darkGreen;
     vec3 lightGreen;
 
+#if EXTRA_BLADES
     if (fsType < 0.7f) { // normal grass
-
+#endif
         darkGreen = vec3(0.184f, 0.329f, 0.027f);
         lightGreen = vec3(0.431f, 0.62f, 0.2f);
 
+#if EXTRA_BLADES
     } else if (fsType < 0.95) { // spiky grass (cool tone)
 
         darkGreen = vec3(0.204f, 0.192f, 0.212f);
@@ -38,6 +42,7 @@ void main() {
         lightGreen = vec3(0.51f, 0.529f, 0.318f);
 
     }
+#endif
 
     vec3 green = mix(darkGreen, lightGreen, fsPosY);
 

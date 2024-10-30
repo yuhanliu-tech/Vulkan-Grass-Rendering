@@ -1,6 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+#define EXTRA_BLADES 0
+
 layout(quads, equal_spacing, ccw) in;
 
 layout(set = 0, binding = 0) uniform CameraBufferObject {
@@ -60,14 +62,15 @@ void main() {
 
     fsType = bladeHash;
 
+#if EXTRA_BLADES
     if (bladeHash < 0.70) {
-        
+#endif        
         // normal grass
 
         float threshold = 0.0;
         t = 0.5 + (u - 0.5) * (1 - (max(v - threshold, 0) / (1 - threshold)));
         pos = (1 - t) * c0 + t * c1;
-
+#if EXTRA_BLADES
     } else if (bladeHash < 0.95) {
         
         // spiky grass
@@ -97,7 +100,7 @@ void main() {
         pos = (1 - t) * (c0 + offset * t1) + t * (c1 + offset * t1);
     
     }
-
+#endif
     fsNor = normalize(cross(t0, t1));
     fsPosY = pos.y;
     

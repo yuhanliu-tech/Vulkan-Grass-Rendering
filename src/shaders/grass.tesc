@@ -42,9 +42,9 @@ void main() {
     if (dist < 15.0) {
         tessLevel = 20.0; 
     } else if (dist < 25.0) {
-        tessLevel = 10.0; 
-    } else {
         tessLevel = 6.0; 
+    } else {
+        tessLevel = 4.0; 
     }
 
     // Low/varying tesselations doesn't work for the dandelion leaves, so use this instead
