@@ -16,6 +16,11 @@ layout(location = 3) in vec4 inUp[];
 
 layout(location = 0) out vec3 fsNor;
 layout(location = 1) out float fsPosY;
+layout(location = 2) out float fsType;
+
+float hash(float x, float z) {
+    return fract(sin(dot(vec2(x, z), vec2(12.9898, 78.233))) * 43758.5453);
+}
 
 void main() {
     float u = gl_TessCoord.x;
@@ -44,23 +49,58 @@ void main() {
 
     vec3 t0 = normalize(b - a); 
 
-    // triangle interpolation parameter
-    float threshold = 0.0;
-    float t = 0.5 + (u - 0.5) * (1 - (max(v - threshold, 0) / (1 - threshold)));
+    // -------------------------------------------------------------------
 
-    // enhance shape of grass, inspired by paper's section on dandelion leaves
-    float spikes = 0.5 * abs(fract(50.f * v)) * smoothstep(0.9, 0.1, v);
-    
-    if (u > 0) {
-        t += spikes;
+    // Generate a random float based on the blade’s position
+    float bladeHash = hash(v0.x, v0.y); // Change ID for unique pattern per blade
+
+    // Choose shape style based on the hash
+    float t; // Interpolation parameter
+    vec3 pos;
+
+    fsType = bladeHash;
+
+    if (bladeHash < 0.70) {
+        
+        // normal grass
+
+        float threshold = 0.0;
+        t = 0.5 + (u - 0.5) * (1 - (max(v - threshold, 0) / (1 - threshold)));
+        pos = (1 - t) * c0 + t * c1;
+
+    } else if (bladeHash < 0.95) {
+        
+        // spiky grass
+
+        float threshold = 0.0;
+        t = 0.5 + (u - 0.5) * (1 - (max(v - threshold, 0) / (1 - threshold)));
+
+        // enhance shape of grass, inspired by paper's section on dandelion leaves
+        float spikes = 0.5 * abs(fract(50.f * v)) * smoothstep(0.9, 0.1, v);
+
+         if (u > 0) {
+            t += spikes;
+        } else {
+            t -= spikes;
+        }
+
+        pos = (1 - t) * c0 + t * c1;
+
     } else {
-        t -= spikes;
+
+        // bubble grass
+
+        float leafFrequency = 25.0;
+        float leafAmplitude = 0.15;
+        t = 0.5 + (u - 0.5) * (1 - (max(v - 0.5, 0) / 0.5));
+        float offset = sin(leafFrequency * v) * leafAmplitude * (u < 0.5 ? -1.0 : 1.0) + v;
+        pos = (1 - t) * (c0 + offset * t1) + t * (c1 + offset * t1);
+    
     }
 
-    vec3 pos = (1-t) * c0 + (t * c1); // interpolate to calculate position
-    fsNor = normalize(cross(t0, t1)); // normal via cross produce 
+    fsNor = normalize(cross(t0, t1));
     fsPosY = pos.y;
     
-    gl_Position = camera.proj * camera.view * vec4(pos, 1.0); 
+    gl_Position = camera.proj * camera.view * vec4(pos, 1.0);
 
 }
