@@ -4,9 +4,9 @@
 #define WIND 1
 #define GRAVITY 1
 #define RECOVERY 1
-#define ORIENT_CULL 0
-#define FRUSTUM_CULL 0
-#define DIST_CULL 0
+#define ORIENT_CULL 1
+#define FRUSTUM_CULL 1
+#define DIST_CULL 1
 
 
 #define WORKGROUP_SIZE 32
