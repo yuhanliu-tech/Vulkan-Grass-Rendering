@@ -85,7 +85,7 @@ Inspired by the paper's investigation into more complex blade shapes (the paper 
 |Basic Blade|Spiky Blade|Bubble Blade|
 |---|---|---|
 | <img align="center" src="./img/blade1.png" width="120"> | <img align="center" src="./img/blade2.png" width="120"> | <img align="center" src="./img/blade3.png" width="120"> |
-| Triangular interpolation, follows equation given in paper. | Add symmetric sinusoidal displacement to create ridges, with smoothstep to lower spike amplitude towards tip. | Rounder displacement that forms "bubbles" around a blade. |
+| Triangular interpolation, follows equation given in paper. | Add symmetric sinusoidal displacement to create ridges, with smoothstep to lower spike amplitude towards tip. | Rounder displacement that forms "bubbles" around a blade. Also angled/tilted for aesthetic variation. |
 
 I combined the above blade types into one final scene. To do this, in the tessellation evaluation shader, I added a generic hash function that maps each blade's X and Y position to a float on the interval [0,1]. The value of this float determines which blade shape it is to take on, with basic blades being the most common and bubble blades being the rarest. The blade type is then passed to the fragment shader, in which each blade type is assigned different pairs of colors that are interpolated. 
 
