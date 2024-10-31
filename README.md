@@ -48,6 +48,10 @@ Culling optimizes performance by removing non-contributing grass blades from the
 | Frustum Culling | Discards blades entirely outside the camera’s view, based on the visibility of control points ```v0```, ```v2```, and midpoint ```m```. | <img align="center"  src="./img/frustculling.gif" width="320"> |
 | Distance Culling | Blades far from the camera are culled to avoid rendering details that are indistinguishable at a distance. | <img align="center"  src="./img/distculling.gif" width="320"> |
 
+### Performance Improvements
+
+<img src="img/cullfps.png" width="550"/> 
+
 ## Tessellating Bezier curves into grass blades
 
 Each Bezier curve passes into the grass graphics pipeline as a patch, then tessellated in the tessellation control shader. This step generates vertices that shape each blade’s quad geometry. The tessellation evaluation shader then positions these vertices in world space, adjusting them to match the blade’s width, height, and orientation. This process creates detailed, lifelike grass blades that reflect their underlying Bezier curves and attributes, producing a visually accurate and efficient rendering.
@@ -60,6 +64,8 @@ Tessellate to varying levels of detail as a function of how far the grass blade 
 
 The blade shown in left image has tesselation level of four because it is at the farthest distance level. After moving the camera closer towards the blade as seen in the right image, the blade is rendered at a higher tesselation level of 20, producing a smoother curve.
 
+<img src="img/tessfps.png" width="550"/> 
+
 ### Complex Blade Shapes
 
 |Basic Blade|Spiky Blade|Bubble Blade|
@@ -71,15 +77,9 @@ Hash function based on blade position to determine which shape, and thus color s
 
 <img src="img/closeup.gif" width="500"/>
 
-### Performance Analysis
+### Overall Performance Analysis
 
-#### Grass Simulation Performance
-
-* Your renderer handles varying numbers of grass blades
-
-#### Improvements from Culling Techniques
-
-* There will be an insightful graph here trust. 
+<img src="img/fps.png" width="650"/> 
 
 ### Bloopers (that Produced Cool Imagery)
 
