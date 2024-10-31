@@ -111,5 +111,5 @@ The following images are included just for fun. These were bloopers I encountere
 I encountered this result when trying to map different blade types to different color pairs between the tessellation evaluation shader and the grass fragment shader. I determined color from the hash function using discrete comparison instead of range buckets, producing the colored stripes on the blade.
 
 <img src="img/blooper.png" width="500"/> 
-I really like the output of this specific mix of bugs. The colored stripes from the above scenario combines with interpolating blade color based on normals instead of y-position. 
+I really like the output of this specific mix of bugs. The colored stripes from the above scenario combines with interpolating blade color based on normals instead of y-position. I might add this to a branch and explore it a bit on the technical art side (with additional shaders)? It reminds me of the 2D, pattern-like flora art style of [Henri Rousseau](https://henrirousseau.org/)
 
