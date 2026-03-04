@@ -29,21 +29,28 @@ Below is the full pipeline:
 > 2. **Compute Shader**
 >    - Updates grass physics and performs culling
 >    - Writes updated blades and draw arguments for indirect draw
+>    - IN: camera buffer, blades (control points) buffer
+>    - OUT: updated blades buffer, culled blades buffer, draw command buffer
 > 
 > 3. **Vertex Shader**
 >    - Transforms blade control points (`v0`, `v1`, `v2`, `up`) to world space
 >    - Passes data to tessellation stage
+>    - IN: blade control points, model matrix
+>    - OUT: transformed control points, glPosition
 > 
 > 4. **Tessellation**
 >    - **Tessellation Control Shader (TCS):** sets tessellation level based on distance to camera
 >    - **Tessellation Evaluation Shader (TES):**
 >      - Generates vertices for each blade using quadratic Bezier interpolation
 >      - Computes blade width, orientation, and per-vertex attributes (normal, type, height)
+>    - IN: blade positions, camera
+>    - OUT: final vertex position, normal, height, blade type
 >
 > 5. **Fragment Shader**
 >    - Colors each pixel of the grass blade
 >    - Uses normal, height, and blade type to vary shading
 >    - Supports multiple blade styles (normal, spiky, bubble)
+>    - OUT: final pixel color
 >
 > 6. **Framebuffer**
 >    - Final shaded grass is drawn to the screen
@@ -63,7 +70,7 @@ Simulating forces, namely gravity, recovery, and wind, involves updating the ```
 |Force|Details|Result|
 |---|---|---|
 | **No Forces** | Result of rendering 4,096 blades of grass with no additional forces. | <img align="center"  src="./img/noforces.png" width="320"> |
-| **Gravity**: computed with both environmental and front-facing components, acts downward on each blade. | Environment gravity represents the downward gravity of the whole scene, whereas front gravity simulates each blades' individual elasticity, causing the tips to bend. With onyl gravity as a force applied, the blades squah down towards the plane. | <img align="center"  src="./img/gravity.png" width="320"> |
+| **Gravity**: computed with both environmental and front-facing components, acts downward on each blade. | Environment gravity represents the downward gravity of the whole scene, whereas front gravity simulates each blades' individual elasticity, causing the tips to bend. With only gravity as a force applied, the blades squah down towards the plane. | <img align="center"  src="./img/gravity.png" width="320"> |
 | **Recovery**: derived from Hooke's Law, counteract deformation, restoring blades to their initial position | Recovery counters the gravity force by factoring the blades' stiffness. This force brings structure back into the blades. | <img align="center"  src="./img/recovery.png" width="320"> |
 | Wind: calculated with custom heuristic functions, considers blade position and time to produce swaying effect. | The impact of this force depends on the winds' strength and direction, as well as the position of the blade. In my renderer, the wind blows across the x-direction in sequential gusts. The impact of the wind also depends on the alignment of the blade: straighter blades are more affected than blades closer to the ground. | <img align="center"  src="./img/wind.gif" width="320"> |
 
