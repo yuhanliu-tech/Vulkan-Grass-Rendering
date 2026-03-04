@@ -17,7 +17,36 @@ This project is an implementation of the paper, [Responsive Real-Time Grass Rend
 
 ## Vulkan Rendering
 
-This project uses the Vulkan API to build a grass simulator and renderer that operates at real-time performance. It leverages a compute shader to apply physics to Bezier curve representations of individual grass blades. By culling non-visible grass blades in each frame, compute shaders optimize efficiency. The remaining visible blades are sent through a graphics pipeline with vertex, tessellation, and fragment shaders to transform, shape, and render them in detail.
+This project uses the Vulkan API and GPU shaders to build a grass simulator and renderer that operates at real-time performance. It leverages a compute shader to apply physics to Bezier curve representations of individual grass blades. By culling non-visible grass blades in each frame, compute shaders optimize efficiency. The remaining visible blades are sent through a graphics pipeline with vertex, tessellation, and fragment shaders to transform, shape, and render them in detail.
+
+Below is the full pipeline: 
+
+> 1. **CPU / Main Application**
+>    - Sets up camera and model matrices
+>    - Loads grass blade data
+>    - Issues draw calls (uses `vkCmdDrawIndirect`)
+>
+> 2. **Compute Shader**
+>    - Updates grass physics and performs culling
+>    - Writes updated blades and draw arguments for indirect draw
+> 
+> 3. **Vertex Shader**
+>    - Transforms blade control points (`v0`, `v1`, `v2`, `up`) to world space
+>    - Passes data to tessellation stage
+> 
+> 4. **Tessellation**
+>    - **Tessellation Control Shader (TCS):** sets tessellation level based on distance to camera
+>    - **Tessellation Evaluation Shader (TES):**
+>      - Generates vertices for each blade using quadratic Bezier interpolation
+>      - Computes blade width, orientation, and per-vertex attributes (normal, type, height)
+>
+> 5. **Fragment Shader**
+>    - Colors each pixel of the grass blade
+>    - Uses normal, height, and blade type to vary shading
+>    - Supports multiple blade styles (normal, spiky, bubble)
+>
+> 6. **Framebuffer**
+>    - Final shaded grass is drawn to the screen
 
 ## Representing Grass as Bezier Curves
 
